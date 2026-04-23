@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>inventory-service</artifactId>
+    <artifactId>inventory-service-cdc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>inventory-service</name>
+    <name>inventory-service-cdc</name>
     <description>Inventory service consuming order events from Kafka and showing inventory status on web</description>
 
     <properties>

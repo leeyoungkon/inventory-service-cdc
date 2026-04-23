@@ -16,7 +16,7 @@ public class InventoryKafkaConsumer {
     private final ObjectMapper objectMapper;
     private final InventoryService inventoryService;
 
-    @KafkaListener(topics = "${app.kafka.topic.order-created:order.created}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${app.kafka.topic.order-created:outbox.event.Order}", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message) {
         try {
             log.info("received Kafka message={}", message);
