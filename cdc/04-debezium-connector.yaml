@@ -1,0 +1,38 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnector
+metadata:
+  name: order-mysql-connector
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: my-connect
+spec:
+  class: io.debezium.connector.mysql.MySqlConnector
+  tasksMax: 1
+  config:
+    database.hostname: mysql.default.svc.cluster.local
+    database.port: 3306
+    database.user: root
+    database.password: root1234
+    database.server.id: 5401
+    topic.prefix: orderdb
+    schema.history.internal.kafka.bootstrap.servers: my-cluster-kafka-bootstrap:9092
+    schema.history.internal.kafka.topic: schema-changes.orderdb
+    include.schema.changes: false
+    database.include.list: orderdb
+    table.include.list: orderdb.outbox_event
+    tombstones.on.delete: false
+
+    transforms: outbox
+    transforms.outbox.type: io.debezium.transforms.outbox.EventRouter
+    transforms.outbox.table.fields.additional.placement: aggregate_type:header:aggregateType
+    transforms.outbox.route.by.field: aggregate_type
+    transforms.outbox.route.topic.replacement: outbox.event.${routedByValue}
+    transforms.outbox.table.field.event.id: id
+    transforms.outbox.table.field.event.key: aggregate_id
+    transforms.outbox.table.field.event.payload: payload
+    transforms.outbox.table.field.event.timestamp: timestamp
+    transforms.outbox.table.field.event.type: type
+
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+    snapshot.mode: initial

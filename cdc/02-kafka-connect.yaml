@@ -1,0 +1,33 @@
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaConnect
+metadata:
+  name: my-connect
+  namespace: kafka
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 4.2.0
+  replicas: 1
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+  groupId: my-connect-cluster
+  offsetStorageTopic: my-connect-offsets
+  configStorageTopic: my-connect-configs
+  statusStorageTopic: my-connect-status
+  config:
+    group.id: my-connect-cluster
+    offset.storage.topic: my-connect-offsets
+    config.storage.topic: my-connect-configs
+    status.storage.topic: my-connect-status
+    offset.storage.replication.factor: -1
+    config.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+  build:
+    output:
+      type: docker
+      image: yklee2002/my-connect-with-debezium:0.0.1
+      pushSecret: null
+    plugins:
+      - name: debezium-mysql-connector
+        artifacts:
+          - type: zip
+            url: https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/3.3.1.Final/debezium-connector-mysql-3.3.1.Final-plugin.zip
