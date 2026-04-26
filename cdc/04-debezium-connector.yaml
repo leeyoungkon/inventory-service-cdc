@@ -30,7 +30,7 @@ spec:
     transforms.outbox.table.field.event.id: id
     transforms.outbox.table.field.event.key: aggregate_id
     transforms.outbox.table.field.event.payload: payload
-    transforms.outbox.table.field.event.timestamp: timestamp
+    transforms.outbox.table.field.event.timestamp: created_at
     transforms.outbox.table.field.event.type: type
 
     key.converter: org.apache.kafka.connect.storage.StringConverter

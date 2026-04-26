@@ -1,3 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dockerhub-secret
+  namespace: kafka
+type: kubernetes.io/dockerconfigjson
+stringData:
+  .dockerconfigjson: |
+    {
+      "auths": {
+        "https://index.docker.io/v1/": {
+          "username": "yklee2002",
+          "password": "YOUR_DOCKERHUB_PASSWORD_OR_TOKEN",
+          "auth": ""
+        }
+      }
+    }
+---
 apiVersion: kafka.strimzi.io/v1
 kind: KafkaConnect
 metadata:
@@ -25,7 +43,7 @@ spec:
     output:
       type: docker
       image: yklee2002/my-connect-with-debezium:0.0.1
-      pushSecret: null
+      pushSecret: dockerhub-secret
     plugins:
       - name: debezium-mysql-connector
         artifacts:

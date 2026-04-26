@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
 import java.util.List;
 
 @Slf4j
@@ -20,14 +21,30 @@ public class InventoryService {
 
     @Transactional
     public void decreaseStock(OrderCreatedEvent event) {
-        Inventory inventory = inventoryRepository.findById(event.getProductName())
-                .orElseThrow(() -> new IllegalArgumentException("inventory not found for product=" + event.getProductName()));
+        String normalizedProductName = normalizeProductName(event.getProductName());
+
+        Inventory inventory = inventoryRepository.findById(normalizedProductName)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "inventory not found for product=" + normalizedProductName + " (raw=" + event.getProductName() + ")"
+            ));
 
         inventory.decrease(event.getQuantity());
         inventoryRepository.save(inventory);
 
         log.info("stock decreased. orderNo={}, productName={}, quantity={}, remaining={}",
                 event.getOrderNo(), event.getProductName(), event.getQuantity(), inventory.getStock());
+    }
+
+    private String normalizeProductName(String productName) {
+        if (productName == null) {
+            throw new IllegalArgumentException("productName must not be null");
+        }
+
+        String normalized = Normalizer.normalize(productName, Normalizer.Form.NFC).trim();
+        if (normalized.isEmpty()) {
+            throw new IllegalArgumentException("productName must not be blank");
+        }
+        return normalized;
     }
 
     @Transactional(readOnly = true)

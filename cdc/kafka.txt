@@ -3,3 +3,10 @@ kubectl apply -f https://strimzi.io/install/latest?namespace=kafka -n kafka
 kubectl get pod -n kafka --watch
 kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-single-node.yaml -n kafka
 kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n kafka
+
+kubectl create secret docker-registry dockerhub-secret `
+  --docker-server=https://index.docker.io/v1/ `
+  --docker-username=yklee2002 `
+  --docker-password=byby3845// `
+  --docker-email=<YOUR_EMAIL> `
+  -n kafka
