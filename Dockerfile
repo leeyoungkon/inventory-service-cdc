@@ -3,9 +3,9 @@ WORKDIR /workspace
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw || true
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
 COPY src/ src/
-RUN ./mvnw clean package -DskipTests || mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
